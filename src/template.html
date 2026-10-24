@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>HYPER·CAR — Le Mans Hypercar, built in code</title>
+<style>
+:root{--c:#5ff3ff;--dim:rgba(150,225,240,.55);--line:rgba(95,243,255,.22);--red:#ff2a3a;--w:#eafcff;
+--mono:'JetBrains Mono','Geist Mono','SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;--disp:'Orbitron','Geist Mono',var(--mono)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--c);font-family:var(--mono);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#cv{display:block;position:fixed;left:0;top:0;touch-action:none;outline:none;cursor:grab}
+#ui{position:fixed;inset:0;pointer-events:none;font-size:11px;letter-spacing:.12em;text-shadow:0 0 6px rgba(95,243,255,.35);transition:opacity .5s}
+#ui button{pointer-events:auto;font:inherit;color:inherit;background:none;border:none;cursor:pointer;letter-spacing:inherit;text-shadow:inherit}
+.br{position:fixed;width:30px;height:30px;border:1px solid var(--c);opacity:.5}
+.br.tl{left:16px;top:16px;border-right:none;border-bottom:none}.br.tr{right:16px;top:16px;border-left:none;border-bottom:none}
+.br.bl{left:16px;bottom:16px;border-right:none;border-top:none}.br.brr{right:16px;bottom:16px;border-left:none;border-top:none}
+#tl{position:fixed;left:36px;top:32px;max-width:46vw}
+.t1{font-family:var(--disp);font-size:24px;font-weight:700;letter-spacing:.24em;color:var(--w);text-shadow:0 0 12px rgba(95,243,255,.8),0 0 26px rgba(95,243,255,.35)}
+.t1 b{color:var(--red);text-shadow:0 0 12px rgba(255,40,60,.9)}
+.t2{margin-top:6px;color:var(--red);font-size:10.5px;letter-spacing:.32em;text-shadow:0 0 8px rgba(255,40,60,.5)}
+.t3{margin-top:10px;font-family:var(--disp);font-size:17px;color:var(--w);letter-spacing:.16em}
+.t3 i{font-style:normal;color:var(--dim);font-size:10px;margin-left:8px;letter-spacing:.2em;font-family:var(--mono)}
+.row{display:flex;gap:18px;margin-top:10px;flex-wrap:wrap}.kv{display:flex;flex-direction:column}.kv i{font-style:normal;color:var(--dim);font-size:9.5px}.kv span{font-size:13px;color:var(--w)}
+#tr{position:fixed;right:36px;top:32px;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+#acc{pointer-events:auto;min-width:230px;border:1px solid rgba(255,42,58,.65);background:linear-gradient(135deg,rgba(60,0,8,.55),rgba(15,0,3,.55));padding:9px 14px 8px;color:#ffe9eb;text-shadow:0 0 6px rgba(255,60,70,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+#acc .l{display:flex;align-items:center;gap:9px;font-size:11.5px;letter-spacing:.2em}
+#acc .d{width:7px;height:7px;border-radius:50%;background:#ffcc33;box-shadow:0 0 8px #ffcc33}
+#acc.done{border-color:rgba(95,243,255,.6);background:linear-gradient(135deg,rgba(0,40,55,.55),rgba(0,10,18,.55));color:var(--w);text-shadow:0 0 6px rgba(95,243,255,.6)}
+#acc.done .d{background:#5fff9b;box-shadow:0 0 8px #5fff9b}
+#acc .bar{height:2px;background:rgba(255,255,255,.12);margin-top:7px}#acc .bar s{display:block;height:100%;width:0;background:currentColor;box-shadow:0 0 6px currentColor}
+#acc .s{font-size:9px;color:rgba(255,220,225,.6);margin-top:5px;letter-spacing:.18em}#acc.done .s{color:var(--dim)}
+.seg{display:flex;border:1px solid var(--line);background:rgba(0,12,20,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.seg button{padding:8px 13px;font-size:10.5px;color:var(--dim)!important}.seg button.on{color:var(--w)!important;background:rgba(95,243,255,.12);box-shadow:inset 0 -2px 0 var(--c)}
+#panel{position:fixed;right:36px;top:50%;transform:translateY(-50%);width:200px;pointer-events:auto;border:1px solid var(--line);background:linear-gradient(180deg,rgba(0,26,38,.55),rgba(0,8,14,.55));backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:10px 12px 8px}
+#panel h4{font-weight:400;font-size:9.5px;color:var(--dim);letter-spacing:.3em;margin:4px 0 6px}
+.tg{display:flex!important;align-items:center;justify-content:space-between;width:100%;border-top:1px solid rgba(95,243,255,.1)!important;font-size:10.5px!important;padding:8px 1px!important;text-align:left}
+.tg:hover{color:#fff}.tg .sw{width:26px;height:11px;border:1px solid var(--c);position:relative;opacity:.45}
+.tg .sw:after{content:'';position:absolute;top:1px;left:1px;width:9px;height:7px;background:var(--c);box-shadow:0 0 6px var(--c);transition:left .2s}
+.tg.on .sw{opacity:1}.tg.on .sw:after{left:14px}
+.tg kbd{font:inherit;font-size:9px;color:var(--dim);margin-left:6px}
+#liv{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:4px}
+#liv button{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:8.5px;color:var(--dim)!important;padding:4px 0}
+#liv button i{width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,255,255,.25);box-shadow:inset 0 0 0 3px rgba(0,0,0,.6)}
+#liv button.on{color:var(--w)!important}#liv button.on i{border-color:var(--c);box-shadow:inset 0 0 0 3px rgba(0,0,0,.6),0 0 10px var(--c)}
+#spec{position:fixed;left:36px;bottom:96px;width:300px;pointer-events:auto;border:1px solid var(--line);background:linear-gradient(135deg,rgba(0,30,45,.55),rgba(0,8,14,.55));backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:11px 14px 10px}
+#spec h4{display:flex;justify-content:space-between;font-weight:400;font-size:9.5px;color:var(--dim);letter-spacing:.3em;margin-bottom:6px}
+#spec h4 b{color:var(--red);font-weight:400}
+#spec .ln{display:flex;justify-content:space-between;gap:10px;font-size:10.5px;line-height:1.85;border-top:1px solid rgba(95,243,255,.07)}#spec .ln i{font-style:normal;color:var(--dim)}#spec .ln span{color:var(--w);text-align:right}
+#spec .note{margin-top:7px;font-size:8.5px;color:rgba(255,120,130,.75);letter-spacing:.16em;line-height:1.5}
+#specBtn{display:none}
+#presets{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);display:flex;gap:2px;border:1px solid var(--line);background:rgba(0,10,16,.6);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);padding:4px;pointer-events:auto;max-width:calc(100vw - 24px);overflow-x:auto;scrollbar-width:none}
+#presets::-webkit-scrollbar{display:none}
+#presets button{padding:9px 13px;font-size:10.5px;color:var(--dim)!important;white-space:nowrap}
+#presets button:hover{color:#fff!important}#presets button.on{color:var(--w)!important;background:rgba(95,243,255,.1);box-shadow:inset 0 0 0 1px rgba(95,243,255,.45)}
+#presets .sep{width:1px;background:var(--line);margin:6px 4px}
+#hint{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);font-size:8.5px;color:var(--dim);letter-spacing:.25em;white-space:nowrap;opacity:.8}
+#lab{position:fixed;inset:0;pointer-events:none;overflow:visible}
+.lb{position:fixed;left:0;top:0;font-size:10px;letter-spacing:.14em;color:var(--w);white-space:nowrap;text-shadow:0 0 6px rgba(95,243,255,.9);opacity:0;transition:none}
+.lb b{display:block;font-weight:400;font-size:8.5px;color:var(--c);letter-spacing:.2em;margin-top:2px}
+.lb:before{content:'';position:absolute;left:-14px;top:5px;width:6px;height:6px;border:1px solid var(--c);border-radius:50%;box-shadow:0 0 6px var(--c)}
+#fade{position:fixed;inset:0;background:#000;pointer-events:none;opacity:0;transition:opacity .25s}
+#help{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);pointer-events:auto}
+#help div{border:1px solid var(--line);background:rgba(0,14,22,.92);padding:20px 24px;max-width:460px;line-height:1.9;font-size:11px;color:var(--w)}
+#help div b{color:var(--c);font-weight:400}
+/* record overlay */
+#rec{position:fixed;inset:0;pointer-events:none;display:none;font-family:var(--mono)}
+.rec #rec{display:block}.rec #ui{display:none}
+#rec .brand{position:absolute;left:64px;top:52px}
+#rec .brand .t1{font-size:30px}
+#rec .chap{position:absolute;left:64px;bottom:70px;opacity:0}
+#rec .chap .n{font-size:14px;color:var(--red);letter-spacing:.35em;text-shadow:0 0 8px rgba(255,40,60,.6)}
+#rec .chap .h{font-family:var(--disp);font-size:40px;color:var(--w);letter-spacing:.14em;margin-top:8px;text-shadow:0 0 14px rgba(95,243,255,.7)}
+#rec .chap .s{font-size:15px;color:var(--dim);letter-spacing:.24em;margin-top:8px}
+#rec .tc{position:absolute;right:64px;top:54px;text-align:right;font-size:13px;color:var(--dim);letter-spacing:.22em;line-height:1.8}
+#rec .tc b{color:var(--w);font-weight:400}
+#rec .tc .acc{display:inline-block;border:1px solid rgba(255,42,58,.65);background:rgba(50,0,6,.5);color:#ffe9eb;padding:6px 12px;margin-bottom:6px}
+#rec .bars{position:absolute;inset:0;box-shadow:inset 0 0 0 0 #000}
+#rec .end{position:absolute;left:0;right:0;top:38%;text-align:center;opacity:0}
+#rec .end .k{font-size:16px;letter-spacing:.5em;color:var(--red);text-shadow:0 0 10px rgba(255,40,60,.6)}
+#rec .end h1{font-family:var(--disp);font-weight:700;font-size:76px;letter-spacing:.12em;color:var(--w);margin-top:18px;text-shadow:0 0 18px rgba(95,243,255,.7),0 0 40px rgba(95,243,255,.3)}
+#rec .end h1 span{color:var(--c)}
+#rec .end .ln{width:640px;height:1px;margin:24px auto;background:linear-gradient(90deg,transparent,var(--c),transparent)}
+#rec .end p{font-size:17px;letter-spacing:.3em;color:var(--dim)}
+#rec .end .f{margin-top:16px;font-size:13px;color:rgba(255,140,150,.8);letter-spacing:.25em}
+@media (max-width:820px){
+  #tl{left:20px;top:20px;max-width:60vw}.t1{font-size:17px}.t2{font-size:8.5px;letter-spacing:.2em}.t3{font-size:13px;margin-top:6px}.t3 i{display:none}.row{display:none}
+  .br{display:none}
+  #tr{right:12px;top:16px;gap:6px}#acc{min-width:0;padding:6px 9px}#acc .l{font-size:9.5px;letter-spacing:.12em}#acc .s{display:none}
+  .seg button{padding:6px 8px;font-size:9px}
+  #panel{right:auto;left:12px;top:auto;bottom:74px;transform:none;width:auto;display:flex;align-items:center;gap:10px;padding:5px 8px}
+  #panel h4{display:none}.tg{border:none!important;width:auto;gap:6px;padding:4px 2px!important;font-size:9px!important}.tg kbd{display:none}
+  #liv{margin:0;gap:2px}#liv button{font-size:0;padding:0 2px}#liv button i{width:20px;height:20px}
+  #spec{left:12px;right:12px;width:auto;bottom:118px;display:none}#spec.open{display:block}
+  #specBtn{display:block!important;position:fixed;right:12px;bottom:78px;border:1px solid var(--line)!important;background:rgba(0,10,16,.6)!important;padding:6px 9px!important;font-size:9px!important}
+  #presets{bottom:22px;left:12px;right:12px;transform:none;max-width:none}#presets button{padding:8px 9px;font-size:9.5px}
+  #hint{display:none}
+}
+</style></head>
+<body>
+<canvas id="cv" tabindex="0"></canvas>
+<div id="lab"></div>
+<div id="ui">
+ <div class="br tl"></div><div class="br tr"></div><div class="br bl"></div><div class="br brr"></div>
+ <div id="tl">
+  <div class="t1">HYPER<b>·</b>CAR</div>
+  <div class="t2">LE MANS HYPERCAR · PROCEDURAL CONCEPT</div>
+  <div class="t3">NOCTIS HC-24<i>BUILT IN CODE · THREE.JS</i></div>
+  <div class="row"><div class="kv"><i>LENGTH</i><span>4995 MM</span></div><div class="kv"><i>WIDTH</i><span>2000 MM</span></div><div class="kv"><i>WHEELBASE</i><span>3150 MM</span></div><div class="kv"><i>MASS</i><span>1030 KG</span></div></div>
+ </div>
+ <div id="tr">
+  <div id="acc"><div class="l"><span class="d"></span><span id="accT">ACCUMULATING 1/64</span></div><div class="bar"><s id="accB"></s></div><div class="s" id="accS">JITTERED AA · AREA-LIGHT SOFT SHADOWS</div></div>
+  <div class="seg" id="modes"><button data-m="studio" class="on">STUDIO · CYCLORAMA</button><button data-m="night">NIGHT TRACK</button></div>
+  <div class="seg"><button id="helpBtn">?</button></div>
+ </div>
+ <div id="panel">
+  <h4>SYSTEMS</h4>
+  <button class="tg" id="tX"><span>X-RAY<kbd>X</kbd></span><span class="sw"></span></button>
+  <button class="tg" id="tA"><span>AERO FLOW<kbd>A</kbd></span><span class="sw"></span></button>
+  <button class="tg on" id="tL"><span>LIGHTS<kbd>L</kbd></span><span class="sw"></span></button>
+  <h4 style="margin-top:10px">LIVERY</h4>
+  <div id="liv"></div>
+ </div>
+ <div id="spec">
+  <h4><span>CONCEPT SPEC</span><b>FICTIONAL</b></h4>
+  <div class="ln"><i>CLASS</i><span>LMH · HYPERCAR</span></div>
+  <div class="ln"><i>L × W × H</i><span>4995 × 2000 × 1065 MM</span></div>
+  <div class="ln"><i>WHEELBASE</i><span>3150 MM</span></div>
+  <div class="ln"><i>ICE</i><span>2.9 L V6 120° TWIN-TURBO</span></div>
+  <div class="ln"><i>FRONT AXLE</i><span>e-MOTOR 200 KW</span></div>
+  <div class="ln"><i>SYSTEM (BoP)</i><span>520 KW · 707 PS</span></div>
+  <div class="ln"><i>ENERGY STORE</i><span>900 V · 2.4 KWH</span></div>
+  <div class="ln"><i>CHASSIS</i><span>CFRP MONOCOQUE · PUSHROD DW</span></div>
+  <div class="ln"><i>TYRES</i><span>31/71 R18 F · 34/71 R18 R</span></div>
+  <div class="ln"><i>V-MAX (SIM)</i><span>342 KM/H</span></div>
+  <div class="note">ILLUSTRATIVE NUMBERS FOR A FICTIONAL CONCEPT · NOT A REAL CAR</div>
+ </div>
+ <button id="specBtn">SPEC</button>
+ <div id="presets">
+  <button data-p="hero" class="on">HERO 3/4</button><button data-p="rear">REAR 3/4</button><button data-p="side">SIDE</button><button data-p="front">FRONT</button><button data-p="top">TOP</button><button data-p="cockpit">COCKPIT</button><button data-p="susp">SUSPENSION · CUTAWAY</button><span class="sep"></span><button data-p="reset">RESET</button>
+ </div>
+ <div id="hint">DRAG ORBIT · SCROLL ZOOM · RIGHT-DRAG PAN · 1–7 CAMERAS · N NIGHT · X / A / L TOGGLES</div>
+</div>
+<div id="help"><div><b>HYPER·CAR</b> — a fictional Le Mans Hypercar built entirely in code: the body is a lofted ring-inset surface from analytic design curves, the livery is painted on canvases and projected in a custom shader, the 2×2 twill carbon is procedural with an anisotropy map.<br><br>
+<b>PROGRESSIVE RENDER</b> — when the camera is still, frames are re-rendered with sub-pixel jitter and a jittered area key light and averaged (64 samples) for clean AA and soft shadows.<br>
+<b>NIGHT TRACK</b> — wet asphalt with planar reflections, sodium track lights, headlight beams, motion streaks, light trails. Brake discs glow when braking (press B).<br>
+<b>KEYS</b> — 1–7 cameras · 0 reset · N mode · X x-ray · A aero · L lights · B brake · C livery<br><br>Numbers are illustrative; this is not a real car. Click to close.</div></div>
+<div id="fade"></div>
+<div id="rec">
+ <div class="brand"><div class="t1">HYPER<b>·</b>CAR</div><div class="t2" style="font-size:12px">LE MANS HYPERCAR · BUILT IN CODE</div></div>
+ <div class="tc" id="rTc"></div>
+ <div class="chap" id="rChap"><div class="n" id="rN"></div><div class="h" id="rH"></div><div class="s" id="rS"></div></div>
+ <div class="end" id="rEnd"><div class="k">NOCTIS HC-24 · FICTIONAL CONCEPT</div><h1>LE MANS HYPERCAR,<br><span>BUILT IN CODE</span></h1><div class="ln"></div><p>ONE HTML FILE · THREE.JS · PROCEDURAL BODY, CARBON &amp; LIVERY</p><div class="f">PROGRESSIVE RENDER · NO MODELS · NO TEXTURES DOWNLOADED</div></div>
+</div>
+<script>
+__BUNDLE__
+</script></body></html>
